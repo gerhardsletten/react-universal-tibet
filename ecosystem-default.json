@@ -1,0 +1,29 @@
+{
+  "apps" : [
+
+    {
+      "name": "livemap",
+      "script": "./bin/server.js",
+      "instances"  : 0,
+      "exec_mode"  : "cluster_mode",
+      "env": {
+        "NODE_ENV": "production",
+        "PORT": 8080,
+        "APIPORT": 3030,
+        "NODE_PATH": "./src"
+      }
+    },
+
+    {
+      "name": "livemap_api",
+      "script": "./bin/api.js",
+      "instances"  : 1,
+      "exec_mode"  : "cluster_mode",
+      "env": {
+        "NODE_ENV": "production",
+        "APIPORT": 3030,
+        "NODE_PATH": "./api"
+      }
+    }
+  ]
+}
