@@ -2,7 +2,8 @@ import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import {asyncConnect} from 'redux-connect'
 import {Link} from 'react-router'
-import {isLoaded as isAuthLoaded, load as loadAuth, logout} from 'redux/modules/auth'
+import {isLoaded as isAuthLoaded, isAuthenticated, load as loadAuth, logout} from 'redux/modules/auth'
+import {isLoaded as isCartLoaded, load as loadCart} from 'redux/modules/cart'
 import {push} from 'react-router-redux'
 import config from 'config'
 import style from './style.css'
@@ -13,12 +14,17 @@ import style from './style.css'
     if (!isAuthLoaded(getState())) {
       promises.push(dispatch(loadAuth()))
     }
+    if (!isCartLoaded(getState())) {
+      console.log('load cart')
+      promises.push(dispatch(loadCart()))
+    }
     return Promise.all(promises)
   }
 }])
 @connect(
   (state) => ({
-    user: state.auth.user
+    user: state.auth.user,
+    cart: state.cart.data
   }),
   {
     pushState: push,
@@ -29,6 +35,7 @@ export default class App extends Component {
   static propTypes = {
     children: PropTypes.object.isRequired,
     user: PropTypes.object,
+    cart: PropTypes.object,
     pushState: PropTypes.func.isRequired
   }
 
@@ -50,15 +57,21 @@ export default class App extends Component {
   }
 
   getNav () {
-    const {user} = this.props
+    const {user, cart} = this.props
     const nav = [{
       url: '/',
       name: 'Home'
-    }]
+    }, {
+      url: '/shop',
+      name: 'Shop'
+    },]
     if (user) {
       return [...nav, {
         url: '/mypage',
         name: 'My Page'
+      }, {
+        url: '/cart',
+        name: `Cart (${cart.total_price || '0'})`
       }]
     }
     return [...nav, {

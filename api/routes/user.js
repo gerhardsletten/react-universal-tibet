@@ -52,6 +52,83 @@ function getProducts (req, res) {
   .catch((err) => res.json(err))
 }
 
+function getCart (req, res) {
+  decodeToken(req.session.user)
+  .then((user) => {
+    superagent
+    .get('https://tibet.gyldendal.no/cors/cart/read.json')
+    .send({
+      site: user.tibetSite
+    })
+    .set('X-Requested-With', 'XMLHttpRequest')
+    .set('Cookie', `tibet_session_gu_guux=${user.tibet_access_identifier};`)
+    .set('Accept', 'application/json')
+    .end((err, {body}) => {
+      if (err || body.error) {
+        console.log('err', err)
+        return res.status(403).json({error: body.error || JSON.stringify(err)})
+      }
+      res.json(body.cart)
+    })
+  })
+  .catch((err) => res.json(err))
+}
+
+function addToCart (req, res) {
+  decodeToken(req.session.user)
+  .then((user) => {
+    superagent
+    .post('https://tibet.gyldendal.no/cors/cart/add_product_alternative.json')
+    .send(`site=${user.tibetSite}&product_id=${req.body.product_id}&price_alternative_id=${req.body.price_alternative_id}&quantity=${req.body.quantity}`)
+    /* Bug in api want let us send as an object
+    .send(``{
+      site: user.tibetSite,
+      product_id: req.body.product_id,
+      price_alternative_id: req.body.price_alternative_id,
+      quantity: req.body.quantity
+    })
+    */
+    .set('X-Requested-With', 'XMLHttpRequest')
+    .set('Cookie', `tibet_session_gu_guux=${user.tibet_access_identifier};`)
+    .set('Accept', 'application/json')
+    .end((err, {body}) => {
+      if (err || body.error) {
+        console.log('err', err)
+        return res.status(403).json({error: body.error || JSON.stringify(err)})
+      }
+      res.json(body.cart)
+    })
+  })
+  .catch((err) => res.json(err))
+}
+
+function removeFromCart (req, res) {
+  decodeToken(req.session.user)
+  .then((user) => {
+    if (!user) {
+      res.json({})
+    }
+    superagent
+    .post('https://tibet.gyldendal.no/cors/cart/remove_product_alternative.json')
+    .send({
+      site: user.tibetSite,
+      product_id: req.params.product_id,
+      price_alternative_id: req.params.price_alternative_id
+    })
+    .set('X-Requested-With', 'XMLHttpRequest')
+    .set('Cookie', `tibet_session_gu_guux=${user.tibet_access_identifier};`)
+    .set('Accept', 'application/json')
+    .end((err, {body}) => {
+      if (err || body.error) {
+        console.log('err', err)
+        return res.status(403).json({error: body.error || JSON.stringify(err)})
+      }
+      res.json(body.cart)
+    })
+  })
+  .catch((err) => res.json(err))
+}
+
 function logout (req, res) {
   req.session.destroy(() => {
     req.session = null
@@ -104,6 +181,9 @@ const User = {
   logout,
   loadAuth,
   requireAuth,
-  getProducts
+  getProducts,
+  getCart,
+  addToCart,
+  removeFromCart
 }
 export default User

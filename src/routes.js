@@ -6,7 +6,9 @@ import {
     Home,
     Login,
     MyPage,
-    NotFound
+    NotFound,
+    Shop,
+    Cart
 } from 'containers'
 
 export default (store) => {
@@ -31,8 +33,10 @@ export default (store) => {
       <IndexRoute component={Home}/>
       <Route onEnter={requireLogin}>
         <Route path='/mypage' component={MyPage}/>
+        <Route path='/cart' component={Cart}/>
       </Route>
       <Route path='login' component={Login}/>
+      <Route path='shop' component={Shop}/>
       <Route path='*' component={NotFound} status={404}/>
     </Route>
   )

@@ -30,7 +30,14 @@ var router = express.Router()
 router.route('/user/login').post(User.login)
 router.route('/user/logout').post(User.logout)
 router.route('/user/load').get(User.loadAuth)
+
+/* Info routes */
 router.route('/info').get(User.requireAuth, User.getProducts)
+
+/* Cart routes */
+router.route('/cart').get(User.getCart)
+router.route('/cart').post(User.requireAuth, User.addToCart)
+router.route('/cart/:product_id/:price_alternative_id').delete(User.requireAuth, User.removeFromCart)
 
 app.use(router)
 
