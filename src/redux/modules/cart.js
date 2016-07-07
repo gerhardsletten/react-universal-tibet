@@ -7,6 +7,9 @@ const ADD_FAIL = 'ordnett/cart/ADD_FAIL'
 const REMOVE = 'ordnett/cart/REMOVE'
 const REMOVE_SUCCESS = 'ordnett/cart/REMOVE_SUCCESS'
 const REMOVE_FAIL = 'ordnett/cart/REMOVE_FAIL'
+const CHECKOUT = 'ordnett/cart/CHECKOUT'
+const CHECKOUT_SUCCESS = 'ordnett/cart/CHECKOUT_SUCCESS'
+const CHECKOUT_FAIL = 'ordnett/cart/CHECKOUT_FAIL'
 
 const initialState = {
   loaded: false
@@ -17,6 +20,7 @@ export default function reducer (state = initialState, action = {}) {
     case LOAD:
     case ADD:
     case REMOVE:
+    case CHECKOUT:
       return {
         ...state,
         loading: true
@@ -37,6 +41,7 @@ export default function reducer (state = initialState, action = {}) {
       }
     case ADD_FAIL:
     case REMOVE_FAIL:
+    case CHECKOUT_FAIL:
       return {
         ...state,
         loading: false,
@@ -48,6 +53,11 @@ export default function reducer (state = initialState, action = {}) {
         ...state,
         loading: false,
         data: action.result
+      }
+    case CHECKOUT_SUCCESS:
+      return {
+        ...state,
+        loading: false
       }
     default:
       return state
@@ -82,5 +92,12 @@ export function remove (product_id, price_alternative_id) {
   return {
     types: [REMOVE, REMOVE_SUCCESS, REMOVE_FAIL],
     promise: (client) => client.del(`/cart/${product_id}/${price_alternative_id}`)
+  }
+}
+
+export function checkout () {
+  return {
+    types: [CHECKOUT, CHECKOUT_SUCCESS, CHECKOUT_FAIL],
+    promise: (client) => client.get(`/cart/checkout`)
   }
 }

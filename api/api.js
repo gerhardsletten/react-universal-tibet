@@ -38,6 +38,7 @@ router.route('/info').get(User.requireAuth, User.getProducts)
 router.route('/cart').get(User.getCart)
 router.route('/cart').post(User.requireAuth, User.addToCart)
 router.route('/cart/:product_id/:price_alternative_id').delete(User.requireAuth, User.removeFromCart)
+router.route('/cart/checkout').get(User.requireAuth, User.checkoutCart)
 
 app.use(router)
 

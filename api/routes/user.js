@@ -129,6 +129,29 @@ function removeFromCart (req, res) {
   .catch((err) => res.json(err))
 }
 
+function checkoutCart (req, res) {
+  decodeToken(req.session.user)
+  .then((user) => {
+    superagent
+    .get('https://tibet.gyldendal.no/cors/cart/start_payment.json')
+    .send({
+      site: user.tibetSite
+    })
+    .set('X-Requested-With', 'XMLHttpRequest')
+    .set('Cookie', `tibet_session_gu_guux=${user.tibet_access_identifier};`)
+    .set('Accept', 'application/json')
+    .end((err, {body}) => {
+      console.log('res', body)
+      if (err || body.error) {
+        console.log('err', err)
+        return res.status(403).json({error: body.error || JSON.stringify(err)})
+      }
+      res.json(body)
+    })
+  })
+  .catch((err) => res.json(err))
+}
+
 function logout (req, res) {
   req.session.destroy(() => {
     req.session = null
@@ -184,6 +207,7 @@ const User = {
   getProducts,
   getCart,
   addToCart,
-  removeFromCart
+  removeFromCart,
+  checkoutCart
 }
 export default User
