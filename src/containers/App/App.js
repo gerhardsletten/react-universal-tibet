@@ -15,7 +15,6 @@ import style from './style.css'
       promises.push(dispatch(loadAuth()))
     }
     if (!isCartLoaded(getState())) {
-      console.log('load cart')
       promises.push(dispatch(loadCart()))
     }
     return Promise.all(promises)
@@ -71,7 +70,7 @@ export default class App extends Component {
         name: 'My Page'
       }, {
         url: '/cart',
-        name: `Cart (${cart.total_price || '0'})`
+        name: `Cart (${(cart && cart.total_price) ? cart.total_price : '0'})`
       }]
     }
     return [...nav, {

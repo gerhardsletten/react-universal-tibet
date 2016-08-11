@@ -2,11 +2,15 @@ import express from 'express'
 import session from 'express-session'
 import bodyParser from 'body-parser'
 import config from '../src/config'
+import mongoose from 'mongoose'
 import http from 'http'
 import SocketIo from 'socket.io'
 import {
   User
 } from './routes'
+
+mongoose.connect(config.databaseUri)
+const MongoStore = require('connect-mongo')(session)
 
 const app = express()
 
@@ -19,6 +23,7 @@ const sessionDBKey = 'socket-connections'
 app.use(session({
   secret: config.sessionSecret,
   resave: false,
+  store: new MongoStore({mongooseConnection: mongoose.connection}),
   saveUninitialized: false,
   cookie: { maxAge: (3600000 * 24 * config.sessionTimeoutDays) }
 }))

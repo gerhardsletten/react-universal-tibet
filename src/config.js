@@ -14,6 +14,7 @@ module.exports = Object.assign({
   port: process.env.PORT,
   apiHost: process.env.APIHOST || 'localhost',
   apiPort: process.env.APIPORT,
+  databaseUri: process.env.DATABASE_URI || 'mongodb://localhost:27017/react-univeral-tibet',
   sessionSecret: process.env.SESSION_SECRET || 'supersecret',
   sessionTimeoutDays: process.env.SESSION_TIMEOUT || 7,
   tokenSecret: process.env.TOKEN_SECRET || 'supersecret',
